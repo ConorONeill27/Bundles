@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>📝 Saved Notes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Google Font: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* Reset & Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Full-page Centering */
+    .centered-container {
+      display: flex;
+      justify-content: center; /* Center horizontally */
+      align-items: center; /* Center vertically */
+      height: 100vh; /* Full viewport height */
+      text-align: center;
+    }
+
+    /* Card-style Container */
+    .notes-container {
+      width: 100%;
+      max-width: 800px;
+      background: #1a1f2a;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      text-align: center;
+    }
+
+    /* Header */
+    .notes-container h2 {
+      margin-bottom: 15px;
+      font-weight: 700;
+      font-size: 24px;
+      color: #ffffff;
+    }
+
+    /* Empty Message */
+    .empty-message {
+      color: #bbb;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    /* Table Styling */
+    .notes-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .notes-table thead {
+      background-color: #5865f2;
+      color: white;
+    }
+
+    .notes-table th, .notes-table td {
+      padding: 12px;
+      border-bottom: 1px solid #2c3445;
+    }
+
+    .notes-table tr:hover {
+      background-color: #222834;
+    }
+
+    /* Links */
+    .note-link {
+      color: #8ab4f8;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .note-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Action Buttons */
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .open-btn, .download-btn, .delete-btn {
+      padding: 8px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+    }
+
+    .open-btn {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .download-btn {
+      background-color: #ffcc00;
+      color: black;
+    }
+
+    .delete-btn {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .open-btn:hover {
+      background-color: #218838;
+    }
+
+    .download-btn:hover {
+      background-color: #e6b800;
+    }
+
+    .delete-btn:hover {
+      background-color: #c82333;
+    }
+
+    /* Create Note Button */
+    .create-note {
+      margin-top: 20px;
+    }
+
+    .create-btn {
+      display: inline-block;
+      padding: 10px 15px;
+      background-color: #5865f2;
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .create-btn:hover {
+      background-color: #4752d0;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .notes-container {
+        width: 90%;
+      }
+
+      .actions {
+        flex-direction: column;
+        gap: 5px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="centered-container">
+    <div class="notes-container">
+      <h2>📝 Saved Notes</h2>
+
+      <% if @notes.empty? %>
+        <p class="empty-message">You have no saved notes yet.</p>
+      <% else %>
+        <table class="notes-table">
+          <thead>
+            <tr>
+              <th>Note Title</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @notes.each do |note| %>
+              <tr>
+                <td>
+                  <%= link_to note.title, note_path(note), class: "note-link", data: { turbo: false } %>
+                </td>
+                <td class="actions">
+                  <%= link_to "📂 Open", note_path(note), class: "open-btn", data: { turbo: false } %>
+                  <%= link_to "⬇️ Download", download_notes_path(note), class: "download-btn", data: { turbo: false } %>
+                  <%= link_to "🗑 Delete", note_path(note), method: :delete, class: "delete-btn", data: { turbo_confirm: "Are you sure?", turbo: false } %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% end %>
+
+      <div class="create-note">
+        <%= link_to "+ Create New Note", new_note_path, class: "create-btn", data: { turbo: false } %>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

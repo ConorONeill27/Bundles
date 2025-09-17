@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Document-Aware Chatbot</title>
+  <%= csrf_meta_tags %>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0c0f17, #000); color: #fff; }
+    
+    .top-nav {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      background-color: #14161c;
+      z-index: 100;
+    }
+    .top-nav .logo { font-size: 1.5rem; font-weight: 700; color: #fff; }
+    .top-nav .nav-links a, .top-nav .actions a {
+      margin-right: 1.5rem;
+      text-decoration: none;
+      color: #aaa;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+    .top-nav .nav-links a:hover, .top-nav .actions a:hover { color: #fff; }
+    .nav-btn {
+      padding: 0.5rem 1rem;
+      border: 2px solid #5865f2;
+      border-radius: 6px;
+      color: #fff;
+      font-weight: 500;
+      transition: background-color 0.3s ease;
+      text-decoration: none;
+    }
+    .nav-btn:hover { background-color: #5865f2; }
+
+    /* CONTENT STRUCTURE */
+    .content {
+      display: flex;
+      flex: 1;
+      padding-top: 60px; /* Adjust for fixed nav height */
+      height: calc(100vh - 60px);
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 250px;
+      background-color: #14161c;
+      padding: 1rem;
+      overflow-y: auto;
+      height: 10%;
+    }
+    .sidebar h2 { font-size: 1.2rem; margin-bottom: 1rem; }
+    .sidebar ul { list-style: none; }
+    .sidebar ul li { margin-bottom: 0.75rem; }
+    .sidebar a { text-decoration: none; color: #aaa; transition: color 0.2s ease; }
+    .sidebar a:hover { color: #fff; }
+
+    /* MAIN CONTENT AREA */
+    .main-content {
+      flex: 1;
+      padding: 1rem 2rem;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    /* DOT GRID BACKGROUND */
+    .grid-background::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-image: radial-gradient(#ccc 1px, transparent 1px), radial-gradient(#ccc 1px, transparent 1px);
+      background-position: 0 0, 10px 10px;
+      background-size: 20px 20px;
+      opacity: 0.2;
+      z-index: -1;
+    }
+
+    /* GRID OF CARDS */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+      z-index: 2;
+    }
+    .card {
+      background-color: #1a1f2a;
+      border-radius: 8px;
+      padding: 1rem;
+      text-decoration: none;
+      color: #fff;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      text-align: center;
+    }
+    .card:hover { background-color: #2a2f3a; transform: translateY(-2px); }
+    .card-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+    .card-title { font-weight: 600; margin-bottom: 0.5rem; }
+    .card-desc { font-size: 0.9rem; color: #ccc; }
+
+    #chat-container {
+      background: #1e2a38; /* Dark blue pastel */
+      border: 1px solid #2f3b4c;
+      padding: 15px;
+      width: 400px;
+      height: 500px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+    }
+    #chat-log {
+      height: 80%;
+      overflow-y: auto;
+      border: 1px solid #34495e;
+      padding: 10px;
+      margin-bottom: 15px;
+      background-color: #273746;
+      border-radius: 6px;
+      color: #ecf0f1;
+    }
+    .message { margin-bottom: 10px; }
+    .user { color: #85c1e9; }
+    .bot { color: #82e0aa; }
+    #user-input {
+      width: 75%;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      background-color: #34495e;
+      color: #ecf0f1;
+    }
+    #send-button {
+      padding: 10px 15px;
+      font-size: 14px;
+      background-color: #5dade2;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      margin-left: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    #send-button:hover { background-color: #5499c7; }
+  </style>
+</head>
+<body>
+  <!-- TOP NAVIGATION -->
+  <header class="top-nav">
+    <div class="nav-links">
+      <a href="/" class="nav-btn">← Leave Hub</a> <!-- ✅ Only "Leave Hub" button remains -->
+    </div>
+    <div class="actions">
+      <a href="notes" class="demo-btn">+ New Note</a>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT STRUCTURE -->
+  <div class="content">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <h2>Categories</h2>
+      <ul>
+        <li><a href="#">All</a></li>
+        <li><a href="#">Marketing</a></li>
+        <li><a href="#">Productivity</a></li>
+        <li><a href="#">Sales</a></li>
+        <li><a href="#">Finance</a></li>
+        <li><a href="#">Communication</a></li>
+        <li><a href="#">Cloud Services</a></li>
+        <li><a href="#">Security</a></li>
+        <li><a href="#">Design</a></li>
+        <li><a href="#">Development</a></li>
+        <li><a href="#">Human Resources</a></li>
+        <li><a href="#">Customer Support</a></li>
+        <li><a href="#">E-commerce</a></li>
+        <li><a href="#">Social Media</a></li>
+      </ul>
+    </aside>
+
+    <!-- MAIN GRID CONTENT -->
+    <main class="main-content grid-background">
+      <div class="grid">
+        <!-- Example coworker cards -->
+        <a href="#" class="card">
+          <div class="card-icon">👩</div>
+          <div class="card-title">Alice Brown</div>
+          <div class="card-desc">Lead Engineer in AI and ML solutions.</div>
+        </a>
+        <a href="#" class="card">
+          <div class="card-icon">👨</div>
+          <div class="card-title">Bob Johnson</div>
+          <div class="card-desc">Product Manager focusing on design.</div>
+        </a>
+        <a href="#" class="card">
+          <div class="card-icon">👩</div>
+          <div class="card-title">Catherine Li</div>
+          <div class="card-desc">Marketing Specialist with global impact.</div>
+        </a>
+      </div>
+    </main>
+  </div>
+  
+  <div id="chat-container">
+    <div id="chat-log"></div>
+    <div style="display: flex;">
+      <input type="text" id="user-input" placeholder="Type your message..." />
+      <button id="send-button">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const chatLog = document.getElementById('chat-log');
+    const userInput = document.getElementById('user-input');
+    const sendButton = document.getElementById('send-button');
+
+    function appendMessage(sender, text) {
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message', sender);
+      messageDiv.textContent = sender === 'user' ? 'You: ' + text : 'Bot: ' + text;
+      chatLog.appendChild(messageDiv);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    async function sendMessage(message) {
+      appendMessage('user', message);
+      try {
+        const response = await fetch('/chat/message', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+          },
+          body: JSON.stringify({ message: message })
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          appendMessage('bot', `Error: ${data.error}`);
+        } else {
+          appendMessage('bot', data.reply || 'No reply received.');
+        }
+      } catch (error) {
+        appendMessage('bot', `Error: ${error.message}`);
+      }
+    }
+
+    sendButton.addEventListener('click', () => {
+      const message = userInput.value.trim();
+      if (message) {
+        sendMessage(message);
+        userInput.value = '';
+      }
+    });
+
+    userInput.addEventListener('keyup', (event) => {
+      if (event.key === 'Enter') sendButton.click();
+    });
+  </script>
+</body>
+</html>

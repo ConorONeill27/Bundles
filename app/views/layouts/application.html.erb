@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Group 29 Hack Ireland" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <script src="https://unpkg.com/compromise"></script>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+
+  <style>
+    /* GLOBAL STYLES */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0c0f17, #000); color: #fff; overflow-x: hidden; }
+
+    /* NAVIGATION BAR */
+    nav { position: fixed; top: 0; width: 100%; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; background: transparent; }
+    .nav-left, .nav-right { display: flex; align-items: center; }
+    .logo { font-size: 1.25rem; font-weight: 700; color: #fff; margin-right: 2rem; }
+    .nav-links a { margin-right: 1.5rem; text-decoration: none; color: #ccc; font-weight: 500; transition: color 0.2s ease; }
+    .nav-links a:hover { color: #fff; }
+    .demo-btn { text-decoration: none; padding: 0.6rem 1.2rem; border: 2px solid #5865f2; border-radius: 6px; color: #fff; font-weight: 500; transition: background-color 0.3s ease; }
+    .demo-btn:hover { background-color: #5865f2; }
+
+    /* HERO SECTION */
+    #homepage-hero { margin-top: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: calc(100vh - 80px); }
+    #homepage-hero h1 { font-size: 3rem; font-weight: 700; margin-bottom: 1rem; }
+    #homepage-hero p { max-width: 600px; margin-bottom: 2rem; color: #ccc; }
+    .hero-buttons { display: flex; gap: 1rem; justify-content: center; }
+    .btn { background-color: #fff; color: #000; padding: 0.8rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.3s ease; }
+    .btn:hover { background-color: #ccc; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <%= render "header" %>
+  </header>
+  <!-- DYNAMIC CONTENT -->
+  <%= yield %>
+</body>
+</html>
