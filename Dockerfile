@@ -7,7 +7,7 @@ WORKDIR /rails
 
 # Install base packages
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential libpq-dev pkg-config libsass2 libsass-dev && \
+    apt-get install --no-install-recommends -y build-essential git libpq-dev pkg-config nodejs yarn && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 ENV RAILS_ENV="production" \
