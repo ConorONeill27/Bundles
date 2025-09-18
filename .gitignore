@@ -43,4 +43,3 @@ record_out*
 ggml-base*
 node_modules
 node_modules
-config/database.yml
