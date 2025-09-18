@@ -19,4 +19,4 @@ test:
 
 production:
   <<: *default
-  url: <%= ENV['DATABASE_URL'] %>
+  url: postgresql://bundles:Pr1THzGCc7OLJQD3bw64H2D0GPgzY9FB@dpg-d36483be5dus73ds03n0-a/bundles
