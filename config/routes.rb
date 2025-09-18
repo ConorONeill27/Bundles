@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   resource :session
   resources :passwords, param: :token
 
+  resources :users, only: [:new, :create]
+
   # Health check / PWA
   get "up" => "rails/health#show", :as => :rails_health_check
   get "service-worker" => "rails/pwa#service_worker", :as => :pwa_service_worker
@@ -24,6 +26,8 @@ Rails.application.routes.draw do
   root "home#index"
 
   # Chat
+  get "chat", to: "chat#index", as: :chat_index
+  post "chat/message", to: "chat#message", as: :chat_message
   post "chat/summarize_documents", to: "chat#summarize_documents"
 
   # Misc pages

@@ -91,7 +91,8 @@ class MyHubsController < ApplicationController
           "No reply received."
         end
 
-      session[:conversation] << "Bot: #{bot_reply}"
+      # Only add to session if we want to maintain conversation history
+      # session[:conversation] << "Bot: #{bot_reply}"
       render json: {reply: bot_reply}
     end
   rescue => e

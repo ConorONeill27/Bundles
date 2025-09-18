@@ -1,7 +1,24 @@
-require "chatgpt"
+require "rest_client"
+require "json"
 
 class ChatController < ApplicationController
-  CLIENT = ChatGPT::Client.new(ENV["OPENAI_API_KEY"])
+  GEMINI_API_KEY = "AIzaSyDaaAvKB8P-k3f7f_Qi29kx58PNCAxmGSI"
+  GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+
+  def index
+    # Renders chat/index.html.erb
+  end
+
+  def message
+    prompt = params[:message] || "Hello!"
+    begin
+      response = RestClient.post GEMINI_API_URL, { contents: [{ role: "user", parts: [{ text: prompt }] }] }.to_json, { content_type: :json, accept: :json, "x-goog-api-key": GEMINI_API_KEY }
+      reply = JSON.parse(response.body).dig("candidates", 0, "content", "parts", 0, "text") || "No response generated"
+      render json: { reply: reply }
+    rescue => e
+      render json: { error: e.message }, status: :unprocessable_content
+    end
+  end
 
   def summarize_documents
     notes =
@@ -13,23 +30,33 @@ class ChatController < ApplicationController
         &.map(&:body)
         &.join(" ")
 
-    response =
-      CLIENT.chat(
-        [
+    begin
+      user_question = params[:prompt] || "What information would you like to know?"
+      
+      response = RestClient.post GEMINI_API_URL, { 
+        contents: [
           {
-            model: "gpt-3.5-turbo",
             role: "user",
-            content:
-              "You will get an unordered list of notes from a large company. You are an intern who really wants to impress his boss, here is his question: #{params[:prompt]}.
-
-            And here are the notes: #{notes}"
+            parts: [{
+              text: "You are an AI assistant that answers questions based on the following notes. " \
+                    "You are allowed to engage in basic conversation. Here are the notes:\n\n" \
+                    "#{notes}\n\n" \
+                    "Question: #{user_question}\n" \
+                    "Answer:"
+            }]
           }
         ]
-      )
-
-    Rails.logger.debug("response: " + response)
-
-    render json: response["choices"][0]["message"]["content"]
+      }.to_json, { 
+        content_type: :json, 
+        accept: :json, 
+        "x-goog-api-key": GEMINI_API_KEY 
+      }
+      
+      summary = JSON.parse(response.body).dig("candidates", 0, "content", "parts", 0, "text") || "No summary generated"
+      render json: { summary: summary }
+    rescue => e
+      render json: { error: e.message }, status: :unprocessable_content
+    end
   end
 
   private

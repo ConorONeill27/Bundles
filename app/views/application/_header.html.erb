@@ -4,6 +4,12 @@
     <div class="nav-links">
       <%= link_to "Organizations", organizations_path(), data: { turbo: false } %>
       <%= link_to "Notes", notes_path(), data: { turbo: false } %>
+      <!-- Removed Notebooks, Recordings, Profiles, and Chat tabs -->
+      <!-- <%= link_to "Notebooks", notebooks_path, data: { turbo: false } %> -->
+      <!-- <%= link_to "Recordings", recordings_path, data: { turbo: false } %> -->
+      <!-- <%= link_to "Profiles", profiles_path, data: { turbo: false } %> -->
+      <!-- <%= link_to "Chat", chat_index_path, data: { turbo: false } %> -->
+      <%= link_to "My Hub", my_hub_path, data: { turbo: false } %>
       <%= link_to "About Us", about_us_path, data: { turbo: false } %>
     </div>
   </div>
@@ -12,6 +18,7 @@
       <%= link_to @current_user&.email_address, my_hub_path, class: "demo-btn", data: { turbo: false } %>
     <% else %>
       <%= link_to "Login", new_session_path, class: "demo-btn", data: { turbo: false } %>
+      <%= link_to "Sign Up", new_user_path, class: "demo-btn", data: { turbo: false } %>
     <% end %>
   </div>
 </nav>
