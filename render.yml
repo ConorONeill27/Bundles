@@ -2,7 +2,7 @@ services:
   - type: web
     name: bundles
     env: ruby
-    buildCommand: "bundle install && bundle exec rails assets:precompile && bundle exec rails db:migrate"
+    buildCommand: "bundle install && bundle exec rails assets:precompile && bin/rails db:schema:load RAILS_ENV=production"
     startCommand: "bundle exec puma -C config/puma.rb"
     envVars:
       - key: RAILS_MASTER_KEY
